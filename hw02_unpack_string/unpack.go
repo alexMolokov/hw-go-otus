@@ -14,34 +14,28 @@ func Unpack(str string) (string, error) {
 		return "", nil
 	}
 
-	result := strings.Builder{}
 	in := []rune(str)
+	repeat := make([]int, len(in))
 
-	if unicode.IsDigit(in[0]) {
-		return "", ErrInvalidString
-	}
-
-	isDigit := false
 	for i := 0; i < len(in); i++ {
-		if unicode.IsDigit(in[i]) {
-			if isDigit {
-				return "", ErrInvalidString
-			}
-			repeat, _ := strconv.Atoi(string(in[i]))
-			result.WriteString(strings.Repeat(string(in[i-1]), repeat))
-			isDigit = true
+		if !unicode.IsDigit(in[i]) {
+			repeat[i] = 1
 			continue
 		}
-
-		if !isDigit && i > 0 {
-			result.WriteRune(in[i-1])
+		if i == 0 || unicode.IsDigit(in[i-1]) {
+			return "", ErrInvalidString
 		}
-
-		isDigit = false
+		count, _ := strconv.Atoi(string(in[i]))
+		repeat[i-1] = count
+		repeat[i] = 0
 	}
 
-	if !isDigit {
-		result.WriteRune(in[len(in)-1])
+	result := strings.Builder{}
+	for i := 0; i < len(repeat); i++ {
+		if repeat[i] == 0 {
+			continue
+		}
+		result.WriteString(strings.Repeat(string(in[i]), repeat[i]))
 	}
 
 	return result.String(), nil
