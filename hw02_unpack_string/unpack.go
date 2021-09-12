@@ -17,6 +17,7 @@ func Unpack(str string) (string, error) {
 	in := []rune(str)
 	repeat := make([]int, len(in))
 
+	// Подсчитываем количество повторений
 	for i := 0; i < len(in); i++ {
 		if !unicode.IsDigit(in[i]) {
 			repeat[i] = 1
