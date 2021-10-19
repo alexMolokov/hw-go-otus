@@ -15,6 +15,57 @@ func TestList(t *testing.T) {
 		require.Nil(t, l.Back())
 	})
 
+	t.Run("cap one list", func(t *testing.T) {
+		l := NewList()
+		l.PushBack("10")
+
+		first := l.Front()
+		last := l.Back()
+
+		require.Equal(t, 1, l.Len())
+		require.Equal(t, first, last)
+
+		l.MoveToFront(last)
+		first = l.Front()
+		last = l.Back()
+
+		require.Equal(t, first, last)
+		require.Equal(t, "10", first.Value.(string))
+		require.Nil(t, first.Next)
+		require.Nil(t, first.Prev)
+
+		l.Remove(last)
+		require.Equal(t, 0, l.Len())
+		require.Nil(t, l.Front())
+		require.Nil(t, l.Back())
+	})
+
+	t.Run("can put struct", func(t *testing.T) {
+		type T struct {
+			str string
+			i   int
+		}
+		l := NewList()
+
+		v1 := T{str: "10", i: 10}
+		v2 := T{str: "20", i: 20}
+
+		first := l.PushBack(v1)
+		last := l.PushBack(v2)
+
+		require.Equal(t, 2, l.Len())
+		l.MoveToFront(first)
+		require.Equal(t, first, l.Front())
+		l.MoveToFront(last)
+		require.Equal(t, last, l.Front())
+
+		front := l.Front()
+		data := front.Value.(T)
+
+		require.Equal(t, "20", data.str)
+		require.Equal(t, 20, data.i)
+	})
+
 	t.Run("complex", func(t *testing.T) {
 		l := NewList()
 
