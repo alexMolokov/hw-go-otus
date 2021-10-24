@@ -25,13 +25,20 @@ func ExecutePipeline(in In, done In, stages ...Stage) Out {
 			pipeline = fn(pipeline)
 		}
 
+		if done == nil {
+			for value := range pipeline {
+				out <- value
+			}
+			return
+		}
+
 		for {
 			select {
 			case value, ok := <-pipeline:
-				if ok {
-					out <- value
+				if !ok {
+					return
 				}
-				return
+				out <- value
 
 			case <-done:
 				return
