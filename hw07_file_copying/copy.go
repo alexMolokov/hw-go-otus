@@ -33,12 +33,11 @@ func Copy(fromPath, toPath string, offset, limit int64) error {
 		return ErrUnsupportedFile
 	}
 
-	size := srcInfo.Size()
 	if offset < 0 {
 		return errors.New("offset must be  more or equal 0")
 	}
 
-	if size < offset {
+	if size := srcInfo.Size(); size < offset {
 		return ErrOffsetExceedsFileSize
 	}
 
