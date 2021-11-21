@@ -1,7 +1,13 @@
 package main
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/stretchr/testify/require"
+)
 
 func TestCopy(t *testing.T) {
-	// Place your code here.
+	t.Run("empty list", func(t *testing.T) {
+		require.True(t, true, "ok")
+	})
 }
