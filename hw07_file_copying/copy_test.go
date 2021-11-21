@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"os"
 	"path"
 	"testing"
@@ -27,7 +28,7 @@ func TestCopy(t *testing.T) {
 		file, err := os.Open(dstPath)
 		require.False(t, os.IsNotExist(err))
 
-		fileInfo, err := file.Stat()
+		fileInfo, _ := file.Stat()
 		require.Equal(t, int64(0), fileInfo.Size())
 	})
 
@@ -41,6 +42,6 @@ func TestCopy(t *testing.T) {
 		}()
 		err := Copy("/dev/random", dstPath, 0, 100)
 		require.NotNil(t, err)
-		require.True(t, err == ErrUnsupportedFile)
+		require.True(t, errors.Is(err, ErrUnsupportedFile))
 	})
 }
