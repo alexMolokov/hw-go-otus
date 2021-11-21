@@ -42,7 +42,7 @@ func Copy(fromPath, toPath string, offset, limit int64) error {
 	}
 
 	if offset > 0 {
-		src.Seek(offset, 0)
+		src.Seek(offset, io.SeekStart)
 	}
 
 	dst, err := os.Create(toPath)
