@@ -38,8 +38,7 @@ func ReadDir(dir string) (Environment, error) {
 		return nil, err
 	}
 
-	var lineBreak = "\n"
-
+	lineBreak := "\n"
 	environment := make(map[string]EnvValue)
 	for _, file := range files {
 		if file.IsDir() {
