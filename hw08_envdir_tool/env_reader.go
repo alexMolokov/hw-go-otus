@@ -7,7 +7,6 @@ import (
 	"io/ioutil"
 	"os"
 	"path"
-	"runtime"
 	"strings"
 )
 
@@ -39,12 +38,7 @@ func ReadDir(dir string) (Environment, error) {
 		return nil, err
 	}
 
-	var lineBreak string
-	if runtime.GOOS == "windows" {
-		lineBreak = "\r\n"
-	} else {
-		lineBreak = "\n"
-	}
+	var lineBreak = "\n"
 
 	environment := make(map[string]EnvValue)
 	for _, file := range files {
