@@ -2,8 +2,11 @@ package hw09structvalidator
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 type UserRole string
@@ -42,19 +45,83 @@ func TestValidate(t *testing.T) {
 		expectedErr error
 	}{
 		{
-			// Place your code here.
+			User{
+				ID:    "123456789123456789123456789123456789",
+				Name:  "Ok",
+				Age:   18,
+				Email: "alex@mail.ru",
+				Role:  "admin",
+				Phones: []string{
+					"84957137708",
+				},
+				meta: json.RawMessage{1, 2, 3},
+			},
+			nil,
 		},
-		// ...
-		// Place your code here.
+		{
+			App{
+				Version: "1.3.6",
+			},
+			nil,
+		},
+		{
+			Token{
+				Header: []byte{1, 2, 3},
+			},
+			nil,
+		},
+		{
+			Response{
+				Code: 200,
+			},
+			nil,
+		},
 	}
 
 	for i, tt := range tests {
 		t.Run(fmt.Sprintf("case %d", i), func(t *testing.T) {
 			tt := tt
 			t.Parallel()
+			err := Validate(tt.in)
+			require.Equal(t, tt.expectedErr, err)
+		})
+	}
 
-			// Place your code here.
-			_ = tt
+	testsFail := []struct {
+		in          interface{}
+		expectedErr error
+	}{
+		{
+			User{
+				ID:    "123456789",
+				Name:  "Fail",
+				Age:   15,
+				Email: "alexmail.ru",
+				Role:  "admin",
+				Phones: []string{
+					"84957137708",
+				},
+			},
+			ValidationErrors{
+				{Field: "ID", Err: ErrValueIsInvalid},
+				{Field: "Age", Err: ErrValueIsInvalid},
+				{Field: "Email", Err: ErrValueIsInvalid},
+			},
+		},
+	}
+
+	for i, tt := range testsFail {
+		t.Run(fmt.Sprintf("Fail case %d", i), func(t *testing.T) {
+			tt := tt
+			t.Parallel()
+			err := Validate(tt.in)
+			require.NotNil(t, err)
+			errs, _ := err.(ValidationErrors) //nolint:errorlint
+			require.Equal(t, 3, len(errs))
+			expectedErrors, _ := tt.expectedErr.(ValidationErrors) //nolint:errorlint
+			for i, e := range errs {
+				require.True(t, errors.Is(e.Err, expectedErrors[i].Err))
+			}
 		})
 	}
 }
