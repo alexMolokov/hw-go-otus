@@ -71,7 +71,7 @@ func (t *tClient) Send() error {
 		}
 
 		if errors.Is(err, io.EOF) {
-			fmt.Fprint(os.Stderr, "..EOF\n")
+			fmt.Fprint(os.Stderr, "...Send EOF\n")
 			return nil
 		}
 
@@ -97,7 +97,7 @@ func (t *tClient) Receive() error {
 		}
 
 		if errors.Is(err, io.EOF) {
-			fmt.Fprint(os.Stderr, "..EOF\n")
+			fmt.Fprint(os.Stderr, "...Receive EOF\n")
 			return nil
 		}
 
