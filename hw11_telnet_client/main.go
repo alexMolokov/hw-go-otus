@@ -54,7 +54,6 @@ func write(tcpClient TelnetClient, cancel context.CancelFunc) {
 	if err := tcpClient.Send(); err != nil {
 		log.Println(err)
 	}
-	fmt.Fprint(os.Stderr, "...Finish write\n")
 	cancel()
 }
 
