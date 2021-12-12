@@ -54,7 +54,7 @@ func (t *tClient) Close() error {
 }
 
 func (t *tClient) Send() error {
-	reader := bufio.NewReader(os.Stdin)
+	reader := bufio.NewReader(t.in)
 	for {
 		str, err := reader.ReadString('\n')
 		if err == nil {
