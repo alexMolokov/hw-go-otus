@@ -24,8 +24,8 @@ func main() {
 	address := net.JoinHostPort(flag.Arg(0), flag.Arg(1))
 
 	tcpClient := NewTelnetClient(address, *timeout, os.Stdin, os.Stdout)
-	err := tcpClient.Connect()
-	if err != nil {
+
+	if err := tcpClient.Connect(); err != nil {
 		log.Fatal(err)
 	}
 	defer func() {
