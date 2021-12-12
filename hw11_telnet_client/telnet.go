@@ -58,7 +58,6 @@ func (t *tClient) Send() error {
 	for {
 		str, err := reader.ReadString('\n')
 		if err == nil {
-			fmt.Fprintf(os.Stderr, "...Read from stdin %s", str)
 			_, err := t.conn.Write([]byte(str))
 			if err == nil {
 				continue
@@ -72,7 +71,7 @@ func (t *tClient) Send() error {
 		}
 
 		if errors.Is(err, io.EOF) {
-			fmt.Fprint(os.Stderr, "...Send EOF\n")
+			fmt.Fprint(os.Stderr, "...EOF\n")
 			return nil
 		}
 
@@ -85,7 +84,6 @@ func (t *tClient) Receive() error {
 	for {
 		str, err := reader.ReadString('\n')
 		if err == nil {
-			fmt.Fprintf(os.Stderr, "...Read from conn %s", str)
 			_, err := t.out.Write([]byte(str))
 			if err == nil {
 				continue
@@ -99,7 +97,7 @@ func (t *tClient) Receive() error {
 		}
 
 		if errors.Is(err, io.EOF) {
-			fmt.Fprint(os.Stderr, "...Receive EOF\n")
+			fmt.Fprint(os.Stderr, "...EOF\n")
 			return nil
 		}
 
