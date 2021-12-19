@@ -40,7 +40,12 @@ func (i *UserIterator) hasNext() bool {
 }
 
 func (i *UserIterator) next() (*User, error) {
-	err := i.jit.Unmarshal([]byte(i.scanner.Text()), i.user)
+	err := i.jit.Unmarshal(i.scanner.Bytes(), i.user)
+	if err != nil {
+		return nil, err
+	}
+
+	i.user.Email = strings.ToLower(i.user.Email)
 	return i.user, err
 }
 
@@ -67,15 +72,14 @@ func countDomains(uit *UserIterator, domain string) (DomainStat, error) {
 			return nil, err
 		}
 
-		email := strings.ToLower(user.Email)
-		if !strings.HasSuffix(email, find) {
+		if !strings.HasSuffix(user.Email, find) {
 			continue
 		}
 
-		if i := strings.LastIndex(email, "@"); i != -1 {
-			result[email[i+1:]]++
+		if i := strings.LastIndex(user.Email, "@"); i != -1 {
+			result[user.Email[i+1:]]++
 		} else {
-			return nil, fmt.Errorf("string is not correct email - %s", email)
+			return nil, fmt.Errorf("string is not correct email - %s", user.Email)
 		}
 	}
 
