@@ -62,4 +62,16 @@ func TestTelnetClient(t *testing.T) {
 
 		wg.Wait()
 	})
+
+	t.Run("fail connect", func(t *testing.T) {
+		timeout, err := time.ParseDuration("2s")
+		require.NoError(t, err)
+
+		in := &bytes.Buffer{}
+		out := &bytes.Buffer{}
+
+		client := NewTelnetClient("localhost:001", timeout, ioutil.NopCloser(in), out)
+		err = client.Connect()
+		require.Error(t, err, "Not valid connection")
+	})
 }
