@@ -1,12 +1,12 @@
 package hw10programoptimization
 
 import (
-	"encoding/json"
+	"bufio"
 	"fmt"
 	"io"
-	"io/ioutil"
-	"regexp"
 	"strings"
+
+	jsoniter "github.com/json-iterator/go"
 )
 
 type User struct {
@@ -29,39 +29,55 @@ func GetDomainStat(r io.Reader, domain string) (DomainStat, error) {
 	return countDomains(u, domain)
 }
 
-type users [100_000]User
-
-func getUsers(r io.Reader) (result users, err error) {
-	content, err := ioutil.ReadAll(r)
-	if err != nil {
-		return
-	}
-
-	lines := strings.Split(string(content), "\n")
-	for i, line := range lines {
-		var user User
-		if err = json.Unmarshal([]byte(line), &user); err != nil {
-			return
-		}
-		result[i] = user
-	}
-	return
+type UserIterator struct {
+	scanner *bufio.Scanner
+	jit     jsoniter.API
+	user    *User
 }
 
-func countDomains(u users, domain string) (DomainStat, error) {
+func (i *UserIterator) hasNext() bool {
+	return i.scanner.Scan()
+}
+
+func (i *UserIterator) next() (*User, error) {
+	err := i.jit.Unmarshal([]byte(i.scanner.Text()), i.user)
+	return i.user, err
+}
+
+func NewIterator(reader io.Reader) *UserIterator {
+	return &UserIterator{
+		scanner: bufio.NewScanner(reader),
+		jit:     jsoniter.ConfigCompatibleWithStandardLibrary,
+		user:    &User{},
+	}
+}
+
+func getUsers(r io.Reader) (*UserIterator, error) { //nolint:unparam
+	return NewIterator(r), nil
+}
+
+func countDomains(uit *UserIterator, domain string) (DomainStat, error) {
 	result := make(DomainStat)
 
-	for _, user := range u {
-		matched, err := regexp.Match("\\."+domain, []byte(user.Email))
+	find := "." + domain
+
+	for uit.hasNext() {
+		user, err := uit.next()
 		if err != nil {
 			return nil, err
 		}
 
-		if matched {
-			num := result[strings.ToLower(strings.SplitN(user.Email, "@", 2)[1])]
-			num++
-			result[strings.ToLower(strings.SplitN(user.Email, "@", 2)[1])] = num
+		email := strings.ToLower(user.Email)
+		if !strings.HasSuffix(email, find) {
+			continue
+		}
+
+		if i := strings.LastIndex(email, "@"); i != -1 {
+			result[email[i+1:]]++
+		} else {
+			return nil, fmt.Errorf("string is not correct email - %s", email)
 		}
 	}
+
 	return result, nil
 }
