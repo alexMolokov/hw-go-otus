@@ -66,21 +66,22 @@ func countDomains(uit *UserIterator, domain string) (DomainStat, error) {
 
 	find := "." + domain
 
+	var i int
 	for uit.hasNext() {
 		user, err := uit.next()
 		if err != nil {
 			return nil, err
 		}
 
+		if i = strings.LastIndex(user.Email, "@"); i == -1 {
+			return nil, fmt.Errorf("string is not correct email - %s", user.Email)
+		}
+
 		if !strings.HasSuffix(user.Email, find) {
 			continue
 		}
 
-		if i := strings.LastIndex(user.Email, "@"); i != -1 {
-			result[user.Email[i+1:]]++
-		} else {
-			return nil, fmt.Errorf("string is not correct email - %s", user.Email)
-		}
+		result[user.Email[i+1:]]++
 	}
 
 	return result, nil
