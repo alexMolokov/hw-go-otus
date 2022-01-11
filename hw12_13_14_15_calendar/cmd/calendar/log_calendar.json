@@ -1,0 +1,20 @@
+{"level":"info","ts":"2022-01-06T19:05:12+03:00","caller":"logger/logger.go:45","msg":"hello"}
+{"level":"info","ts":"2022-01-06T19:11:01+03:00","caller":"logger/logger.go:50","msg":"hello"}
+{"level":"info","ts":"2022-01-07T17:57:05+03:00","caller":"logger/logger.go:50","msg":"hello"}
+{"level":"info","ts":"2022-01-10T10:52:29+03:00","caller":"logger/logger.go:50","msg":"hello"}
+{"level":"info","ts":"2022-01-10T17:10:08+03:00","caller":"logger/logger.go:50","msg":"calendar is running..."}
+{"level":"error","ts":"2022-01-10T17:10:08+03:00","caller":"logger/logger.go:58","msg":"failed to start http server: listen tcp: address 8085: missing port in address","stacktrace":"github.com/alexMolokov/hw-go-otus/hw12_13_14_15_calendar/internal/logger.(*Logger).Error\n\tC:/Users/Alexey/go/src/hw-go-otus/hw12_13_14_15_calendar/internal/logger/logger.go:58\nmain.main\n\tC:/Users/Alexey/go/src/hw-go-otus/hw12_13_14_15_calendar/cmd/calendar/main.go:73\nruntime.main\n\tC:/Program Files/Go/src/runtime/proc.go:225"}
+{"level":"info","ts":"2022-01-10T17:12:52+03:00","caller":"logger/logger.go:50","msg":"calendar is running..."}
+{"level":"info","ts":"2022-01-10T17:29:03+03:00","caller":"logger/logger.go:50","msg":"calendar is running..."}
+{"level":"info","ts":"2022-01-10T17:40:12+03:00","caller":"logger/logger.go:50","msg":"calendar is running..."}
+{"level":"info","ts":"2022-01-11T10:51:04+03:00","caller":"logger/logger.go:51","msg":"calendar is running..."}
+{"level":"info","ts":"2022-01-11T11:18:57+03:00","caller":"logger/logger.go:51","msg":"calendar is running..."}
+{"level":"info","ts":"2022-01-11T11:54:26+03:00","caller":"logger/logger.go:51","msg":"calendar is running..."}
+{"level":"info","ts":"2022-01-11T11:55:12+03:00","caller":"logger/logger.go:51","msg":"[HTTP] IP=127.0.0.1:2842 Method=GET Path=/ Code=200 Latency=0 Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36"}
+{"level":"info","ts":"2022-01-11T11:55:12+03:00","caller":"logger/logger.go:51","msg":"[HTTP] IP=127.0.0.1:2842 Method=GET Path=/favicon.ico Code=200 Latency=0 Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36"}
+{"level":"info","ts":"2022-01-11T16:15:31+03:00","caller":"logger/logger.go:51","msg":"calendar is running..."}
+{"level":"info","ts":"2022-01-11T16:16:02+03:00","caller":"logger/logger.go:51","msg":"calendar is stopped"}
+{"level":"info","ts":"2022-01-11T16:39:09+03:00","caller":"logger/logger.go:51","msg":"calendar is running..."}
+{"level":"info","ts":"2022-01-11T16:39:22+03:00","caller":"logger/logger.go:51","msg":"[HTTP] IP=127.0.0.1:10979 Method=GET Path=/ Code=200 Latency=0 User-Agent:Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36"}
+{"level":"info","ts":"2022-01-11T16:39:22+03:00","caller":"logger/logger.go:51","msg":"[HTTP] IP=127.0.0.1:10979 Method=GET Path=/favicon.ico Code=200 Latency=0 User-Agent:Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36"}
+{"level":"info","ts":"2022-01-11T16:40:12+03:00","caller":"logger/logger.go:51","msg":"calendar is stopped"}

@@ -1,0 +1,22 @@
+{
+  "logger": {
+    "level": "info",
+    "encoding": "json",
+    "output": "log_calendar.json"
+  },
+  "driverDb": "postgres",
+  "http": {
+    "host": "127.0.0.1",
+    "port": 8085
+  },
+  "db": {
+    "driver": "postgres",
+    "host": "127.0.0.1",
+    "port": 5432,
+    "name": "calendar",
+    "user": "alex_molokov",
+    "password": "alex_molokov",
+    "maxConnectionPool": 4,
+    "SslMode": "disable"
+  }
+}
