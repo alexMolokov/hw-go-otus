@@ -46,8 +46,8 @@ func NewConfig(fileName string) (*Config, error) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
-	err := loader.Load(ctx, cfg)
-	if err != nil {
+
+	if err := loader.Load(ctx, cfg); err != nil {
 		return nil, err
 	}
 
