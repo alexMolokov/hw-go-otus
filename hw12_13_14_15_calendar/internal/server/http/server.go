@@ -2,30 +2,54 @@ package internalhttp
 
 import (
 	"context"
+	"errors"
+	"fmt"
+	"net/http"
+	"time"
 )
 
-type Server struct { // TODO
+type Server struct {
+	App        Application
+	httpServer *http.Server
 }
 
-type Logger interface { // TODO
+type Logger interface {
+	Debug(msg string, args ...interface{})
+	Info(msg string, args ...interface{})
+	Warning(msg string, args ...interface{})
+	Error(msg string, args ...interface{})
 }
 
-type Application interface { // TODO
+type Application interface{}
+
+func NewServer(logger Logger, app Application, addr string) *Server {
+	mux := http.NewServeMux()
+	mux.Handle("/", http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			fmt.Fprintf(w, "ok")
+		},
+	))
+
+	return &Server{
+		App: app,
+		httpServer: &http.Server{
+			Addr:         addr,
+			Handler:      loggingMiddleware(logger, mux),
+			ReadTimeout:  10 * time.Second,
+			WriteTimeout: 10 * time.Second,
+		},
+	}
 }
 
-func NewServer(logger Logger, app Application) *Server {
-	return &Server{}
-}
+func (s *Server) Start() error {
+	err := s.httpServer.ListenAndServe()
+	if err != nil && !errors.Is(err, http.ErrServerClosed) {
+		return err
+	}
 
-func (s *Server) Start(ctx context.Context) error {
-	// TODO
-	<-ctx.Done()
 	return nil
 }
 
 func (s *Server) Stop(ctx context.Context) error {
-	// TODO
-	return nil
+	return s.httpServer.Shutdown(ctx)
 }
-
-// TODO
