@@ -30,7 +30,7 @@ func (s Server) loggingMiddleware(next http.Handler) http.Handler {
 			ip = v
 		}
 
-		s.Logger.Info("[HTTP] IP=%s Method=%s Path=%s Code=%d Latency=%d User-Agent:%s",
+		s.Logger.Info("%s IP=%s Method=%s Path=%s Code=%d Latency=%d User-Agent:%s",
 			r.Proto, ip, r.Method, r.URL.Path, rw.statusCode, time.Since(start), r.UserAgent(),
 		)
 	})

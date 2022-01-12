@@ -4,7 +4,7 @@
     "encoding": "json",
     "output": "log_calendar.json"
   },
-  "driverDb": "postgres",
+  "driverDb": "memory",
   "http": {
     "host": "127.0.0.1",
     "port": 8085
