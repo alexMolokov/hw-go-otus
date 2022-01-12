@@ -36,4 +36,17 @@ func TestGetDomainStat(t *testing.T) {
 		require.NoError(t, err)
 		require.Equal(t, DomainStat{}, result)
 	})
+
+	dataNoEmail := `{"Id":5,"Name":"Janice Rose","Username":"KeithHart","Phone":"146-91-01","Password":"acSBF5","Address":"Russell Trail 61"}`
+	t.Run("no email'", func(t *testing.T) {
+		_, err := GetDomainStat(bytes.NewBufferString(dataNoEmail), "com")
+		require.Error(t, err)
+	})
+
+	dataCapitalDomainLetter := `{"Id":5,"Name":"Janice Rose","Username":"KeithHart","Email":"nulla@Linktype.COM","Phone":"146-91-01","Password":"acSBF5","Address":"Russell Trail 61"}`
+	t.Run("capital domain letter'", func(t *testing.T) {
+		result, err := GetDomainStat(bytes.NewBufferString(dataCapitalDomainLetter), "com")
+		require.NoError(t, err)
+		require.Equal(t, DomainStat{"linktype.com": 1}, result)
+	})
 }

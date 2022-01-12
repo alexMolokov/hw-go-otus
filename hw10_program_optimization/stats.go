@@ -1,12 +1,12 @@
 package hw10programoptimization
 
 import (
-	"encoding/json"
+	"bufio"
 	"fmt"
 	"io"
-	"io/ioutil"
-	"regexp"
 	"strings"
+
+	jsoniter "github.com/json-iterator/go"
 )
 
 type User struct {
@@ -29,39 +29,60 @@ func GetDomainStat(r io.Reader, domain string) (DomainStat, error) {
 	return countDomains(u, domain)
 }
 
-type users [100_000]User
-
-func getUsers(r io.Reader) (result users, err error) {
-	content, err := ioutil.ReadAll(r)
-	if err != nil {
-		return
-	}
-
-	lines := strings.Split(string(content), "\n")
-	for i, line := range lines {
-		var user User
-		if err = json.Unmarshal([]byte(line), &user); err != nil {
-			return
-		}
-		result[i] = user
-	}
-	return
+type UserIterator struct {
+	scanner *bufio.Scanner
+	jit     jsoniter.API
+	user    *User
 }
 
-func countDomains(u users, domain string) (DomainStat, error) {
+func (i *UserIterator) hasNext() bool {
+	return i.scanner.Scan()
+}
+
+func (i *UserIterator) next() (*User, error) {
+	err := i.jit.Unmarshal(i.scanner.Bytes(), i.user)
+	if err != nil {
+		return nil, err
+	}
+
+	i.user.Email = strings.ToLower(i.user.Email)
+	return i.user, err
+}
+
+func NewIterator(reader io.Reader) *UserIterator {
+	return &UserIterator{
+		scanner: bufio.NewScanner(reader),
+		jit:     jsoniter.ConfigCompatibleWithStandardLibrary,
+		user:    &User{},
+	}
+}
+
+func getUsers(r io.Reader) (*UserIterator, error) { //nolint:unparam
+	return NewIterator(r), nil
+}
+
+func countDomains(uit *UserIterator, domain string) (DomainStat, error) {
 	result := make(DomainStat)
 
-	for _, user := range u {
-		matched, err := regexp.Match("\\."+domain, []byte(user.Email))
+	find := "." + domain
+
+	var i int
+	for uit.hasNext() {
+		user, err := uit.next()
 		if err != nil {
 			return nil, err
 		}
 
-		if matched {
-			num := result[strings.ToLower(strings.SplitN(user.Email, "@", 2)[1])]
-			num++
-			result[strings.ToLower(strings.SplitN(user.Email, "@", 2)[1])] = num
+		if i = strings.LastIndex(user.Email, "@"); i == -1 {
+			return nil, fmt.Errorf("string is not correct email - %s", user.Email)
 		}
+
+		if !strings.HasSuffix(user.Email, find) {
+			continue
+		}
+
+		result[user.Email[i+1:]]++
 	}
+
 	return result, nil
 }
