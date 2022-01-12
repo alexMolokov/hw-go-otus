@@ -3,13 +3,13 @@ package internalhttp
 import (
 	"context"
 	"errors"
-	"fmt"
 	"net/http"
 	"time"
 )
 
 type Server struct {
 	App        Application
+	Logger     Logger
 	httpServer *http.Server
 }
 
@@ -23,22 +23,20 @@ type Logger interface {
 type Application interface{}
 
 func NewServer(logger Logger, app Application, addr string) *Server {
-	mux := http.NewServeMux()
-	mux.Handle("/", http.HandlerFunc(
-		func(w http.ResponseWriter, r *http.Request) {
-			fmt.Fprintf(w, "ok")
-		},
-	))
-
-	return &Server{
-		App: app,
-		httpServer: &http.Server{
-			Addr:         addr,
-			Handler:      loggingMiddleware(logger, mux),
-			ReadTimeout:  10 * time.Second,
-			WriteTimeout: 10 * time.Second,
-		},
+	s := &Server{
+		App:    app,
+		Logger: logger,
 	}
+
+	router := s.NewRouter()
+	s.httpServer = &http.Server{
+		Addr:         addr,
+		Handler:      s.loggingMiddleware(router),
+		ReadTimeout:  10 * time.Second,
+		WriteTimeout: 10 * time.Second,
+	}
+
+	return s
 }
 
 func (s *Server) Start() error {

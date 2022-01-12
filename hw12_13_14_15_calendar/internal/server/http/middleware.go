@@ -19,7 +19,7 @@ func (rw *responseWriter) WriteHeader(code int) {
 	rw.ResponseWriter.WriteHeader(code)
 }
 
-func loggingMiddleware(logger Logger, next http.Handler) http.Handler {
+func (s Server) loggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()
 		rw := newResponseWriter(w)
@@ -30,8 +30,8 @@ func loggingMiddleware(logger Logger, next http.Handler) http.Handler {
 			ip = v
 		}
 
-		logger.Info("[HTTP] IP=%s Method=%s Path=%s Code=%d Latency=%d User-Agent:%s",
-			ip, r.Method, r.URL.Path, rw.statusCode, time.Since(start), r.UserAgent(),
+		s.Logger.Info("[HTTP] IP=%s Method=%s Path=%s Code=%d Latency=%d User-Agent:%s",
+			r.Proto, ip, r.Method, r.URL.Path, rw.statusCode, time.Since(start), r.UserAgent(),
 		)
 	})
 }

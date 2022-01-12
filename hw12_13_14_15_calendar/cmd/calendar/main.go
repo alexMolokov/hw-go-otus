@@ -41,16 +41,20 @@ func main() {
 		os.Exit(1)
 	}
 
-	logg := logger.New(&cfg.Logger)
+	logg, err := logger.New(&cfg.Logger)
+	if err != nil {
+		fmt.Printf("Can't create logger: %v", err)
+		os.Exit(1)
+	}
 
 	st, err := storagefactory.NewStorage(cfg)
 	if err != nil {
 		fmt.Printf("Can't create pool connect to storage: %v", err)
 		os.Exit(1)
 	}
-	defer st.Close()
 
 	calendar := app.New(logg, st)
+	defer calendar.Close()
 
 	server := internalhttp.NewServer(logg, calendar, fmt.Sprintf("%s:%d", cfg.HTTP.Host, cfg.HTTP.Port))
 

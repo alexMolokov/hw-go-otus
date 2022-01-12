@@ -23,11 +23,7 @@ func getLevel(level string) zapcore.Level {
 	}
 }
 
-func New(c *configApp.LoggerConf) (l *Logger) {
-	defer func() {
-		l.zp.Sync()
-	}()
-
+func New(c *configApp.LoggerConf) (*Logger, error) {
 	cfg := zap.NewProductionConfig()
 
 	cfg.Level = zap.NewAtomicLevelAt(getLevel(c.Level))
@@ -36,11 +32,16 @@ func New(c *configApp.LoggerConf) (l *Logger) {
 	cfg.ErrorOutputPaths = []string{c.Output}
 	cfg.EncoderConfig.EncodeTime = zapcore.RFC3339TimeEncoder
 
-	logger, _ := cfg.Build()
-
-	return &Logger{
-		zp: logger.Sugar(),
+	loggerZap, err := cfg.Build()
+	if err != nil {
+		return nil, err
 	}
+
+	logger := &Logger{
+		zp: loggerZap.Sugar(),
+	}
+	logger.zp.Sync()
+	return logger, nil
 }
 
 func (l *Logger) Debug(msg string, args ...interface{}) {
